@@ -8,6 +8,7 @@ const createError = require('http-errors');
 const xssClean = require('xss-clean');
 const rateLimit = require('express-rate-limit');
 
+const userRouter = require('./routers/userRouter');
 
 const rateLimitr = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -23,11 +24,10 @@ app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-    res.status(200).send({
-        message: 'welcome to server'
-    });
-})
+app.use("/api/users", userRouter);
+
+
+
 
 app.get("/test", (req, res) => {
     res.status(200).send({
