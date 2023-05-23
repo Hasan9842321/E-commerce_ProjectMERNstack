@@ -2,4 +2,6 @@ require('dotenv').config();
 
 const serverPort = process.env.SERVER_PORT || 500;
 
-module.exports = serverPort;
+const mongoDbUrll = (process.env.MONGODB_ATLAS_URL || 'mongodb://localhost:27017/ecommerceMernBD');
+
+module.exports = { serverPort, mongoDbUrll };
