@@ -1,4 +1,4 @@
-const { Schema, model } = require('mongoose');
+const { Schema, model, default: mongoose } = require('mongoose');
 const bcrypt = require('bcrypt');
 const defaultImagePath = require('../secret');
 
@@ -34,11 +34,11 @@ const userSchema = new Schema({
         }
 
     },
-    // image: {
-    //     type: String,
-    //     default: defaultImagePath
+    image: {
+        type: mongoose.Schema.Types.Mixed,
+        default: defaultImagePath
 
-    // },
+    },
     address: {
         type: String,
         required: [true, "user address required"]
