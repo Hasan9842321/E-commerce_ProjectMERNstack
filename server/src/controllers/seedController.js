@@ -7,10 +7,10 @@ const seedUser = async(req, res, next) => {
         await User.deleteMany({});
 
         //insert new existing users
-        const user = await User.insertMany(data.users);
+        const users = await User.insertMany(data.users);
 
         // successful response
-        return res.status(201).json(data.users);
+        return res.status(201).json(users);
 
     } catch (error) {
         next(error);

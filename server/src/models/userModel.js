@@ -7,7 +7,7 @@ const userSchema = new Schema({
         type: String,
         required: [true, "user name is required"],
         trim: true,
-        minlength: [31, "the length user name can be 31 characters"],
+        minlength: [5, "the length user name can be 31 characters"],
         maxlength: [31, "the length of user name can be maximum 31 characters"]
     },
     email: {
@@ -17,7 +17,7 @@ const userSchema = new Schema({
         unique: true,
         validate: {
             validator: (v) => {
-                return /^\w+([\•− ]?\w+)*@\w+( [\•− ]?\w+)*(\ . \w{2,3}) +$/.test(v);
+                return /^\w+([\•− ]?\w+)*@\w+( [\•− ]?\w+)*(\.\w{2,3})+$/.test(v);
 
             },
             message: 'Please enter a valid email'
@@ -28,13 +28,17 @@ const userSchema = new Schema({
         type: String,
         required: [true, "user password is required"],
         minlength: [6, "the length user password can be 6 characters"],
-        set: (v) => bcrypt.hashSync(v, bcrypt.genSaltSync(10))
-    },
-    image: {
-        type: String,
-        default: defaultImagePath
+        set: (v) => {
+            return bcrypt.hashSync(v, bcrypt.genSaltSync(10));
+
+        }
 
     },
+    // image: {
+    //     type: String,
+    //     default: defaultImagePath
+
+    // },
     address: {
         type: String,
         required: [true, "user address required"]
