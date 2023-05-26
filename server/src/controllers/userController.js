@@ -2,13 +2,14 @@
 const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
+const { default: mongoose } = require('mongoose');
 
 
-const getUesrs = async(req, res, next) => {
+const getAllUsers = async(req, res, next) => {
     try {
         const search = req.query.search || "";
         const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 1;
+        const limit = Number(req.query.limit) || 5;
 
         const searchRegExp = new RegExp('.*' + search + '.*', 'i'); // reguler expression for searching 
         // condition set based on reguler expression
@@ -28,7 +29,7 @@ const getUesrs = async(req, res, next) => {
 
         const count = await User.find(filter).countDocuments();
 
-        //if no users found then http error will be called
+        //worst-case:if no users found then http error will be called
         if (!users) throw createError(404, "no users found");
 
 
@@ -61,6 +62,34 @@ const getUesrs = async(req, res, next) => {
     } catch (error) {
         next(error);
     }
-}
+};
 
-module.exports = getUesrs;
+
+const getUser = async(req, res, next) => {
+    try {
+        const id = req.params.id;
+        const options = { password: 0 };
+
+        const user = await User.findById(id, options);
+        //worst-case:if user not found
+        if (!users) throw createError(404, "user doesnot exist");
+
+        return successResponse(
+            res, {
+                statusCode: 200,
+                message: 'user  are returned',
+                paylod: { user }
+            });
+
+    } catch (error) {
+        //mongoose erroe handal
+        if (error instanceof mongoose.Error) {
+            next(createError(404, "Invalid user id"));
+            return;
+        }
+        next(error);
+    }
+};
+module.exports = { getAllUsers, getUser };
+
+// module.exports = getUesrs;
