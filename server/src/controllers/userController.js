@@ -3,7 +3,8 @@ const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
 const { default: mongoose } = require('mongoose');
-
+const { findUserById } = require('../services/findUser');
+// const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
     try {
@@ -68,12 +69,13 @@ const getAllUsers = async(req, res, next) => {
 const getUser = async(req, res, next) => {
     try {
         const id = req.params.id;
-        const options = { password: 0 };
+        // const options = { password: 0 };
 
-        const user = await User.findById(id, options);
-        //worst-case:if user not found
-        if (!users) throw createError(404, "user doesnot exist");
+        // const user = await User.findById(id, options);
+        // //worst-case:if user not found
+        // if (!users) throw createError(404, "user doesnot exist");
 
+        const user = await findUserById(id);
         return successResponse(
             res, {
                 statusCode: 200,
@@ -82,11 +84,11 @@ const getUser = async(req, res, next) => {
             });
 
     } catch (error) {
-        //mongoose erroe handal
-        if (error instanceof mongoose.Error) {
-            next(createError(404, "Invalid user id"));
-            return;
-        }
+        // //mongoose erroe handal
+        // if (error instanceof mongoose.Error) {
+        //     next(createError(404, "Invalid user id"));
+        //     return;
+        // }
         next(error);
     }
 };
