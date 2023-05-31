@@ -2,8 +2,10 @@
 const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
-const { default: mongoose } = require('mongoose');
-const { findUserById } = require('../services/findUser');
+const fs = require('fs');
+
+
+const { findWithId } = require('../services/findItem');
 // const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
@@ -58,7 +60,8 @@ const getAllUsers = async(req, res, next) => {
 const getUser = async(req, res, next) => {
     try {
         const id = req.params.id;
-        const user = await findUserById(id);
+        const options = { password: 0 };
+        const user = await findWithId(id, options);
 
         return successResponse(
             res, {
@@ -72,4 +75,48 @@ const getUser = async(req, res, next) => {
         next(error);
     }
 };
-module.exports = { getAllUsers, getUser };
+
+const deleteUser = async(req, res, next) => {
+    try {
+        const id = req.params.id;
+        const options = { password: 0 };
+        const user = await findWithId(id, options);
+
+        // deleate user
+        const deleatedUesr = await User.findByIdAndDelete({
+            _id: id,
+            isAdmin: false
+        });
+
+        if (!deleteUser) {
+            console.log("user doesnot exist");
+        }
+
+
+        //user image deleate 
+        const userImagePath = deleatedUesr.image;
+        fs.access(userImagePath, (err) => {
+            if (err) {
+                console.log("user image doesnot exist");
+            } else {
+                fs.unlink(userImagePath, (err) => {
+                    if (err) throw err;
+                    console.log("user image was deleated");
+                })
+            }
+        })
+
+
+        return successResponse(
+            res, {
+                statusCode: 200,
+                message: 'user was  deleted succesfully'
+
+            });
+
+    } catch (error) {
+
+        next(error);
+    }
+};
+module.exports = { getAllUsers, getUser, deleteUser };
