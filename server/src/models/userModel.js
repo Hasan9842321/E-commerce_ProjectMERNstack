@@ -36,6 +36,7 @@ const userSchema = new Schema({
     },
     image: {
         type: mongoose.Schema.Types.Mixed,
+        // type: String,
         default: defaultImagePath
 
     },
