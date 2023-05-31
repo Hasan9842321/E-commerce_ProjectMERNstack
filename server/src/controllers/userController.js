@@ -83,28 +83,30 @@ const deleteUserById = async(req, res, next) => {
         const user = await findWithId(User, id, options);
 
         // deleate user
-        const deleatedUesr = await User.findByIdAndDelete({
-            _id: id,
-            isAdmin: false
-        });
+        // const deleatedUesr = await User.findByIdAndDelete({
+        //     _id: id,
+        //     isAdmin: false
+        // });
 
-        if (!deleteUser) {
-            console.log("user doesnot exist");
-        }
+        // if (!deleteUser) {
+        //     console.log("user doesnot exist");
+        // }
 
 
-        //user image deleate 
-        const userImagePath = deleatedUesr.image;
-        fs.access(userImagePath, (err) => {
+        const userImagePath = user.image;
+        fs.existsSync(userImagePath, (err) => {
             if (err) {
                 console.log("user image doesnot exist");
             } else {
                 fs.unlink(userImagePath, (err) => {
-                    if (err) throw err;
                     console.log("user image was deleated");
-                })
+                });
             }
-        })
+        });
+        await User.findByIdAndDelete({
+            _id: id,
+            isAdmin: false
+        });
 
 
         return successResponse(
