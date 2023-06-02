@@ -2,7 +2,7 @@
 const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
-const fs = require('fs');
+const fs = require('fs').promises;
 
 
 const { findWithId } = require('../services/findItem');
@@ -56,7 +56,6 @@ const getAllUsers = async(req, res, next) => {
     }
 };
 
-
 const getUserById = async(req, res, next) => {
     try {
         const id = req.params.id;
@@ -82,38 +81,24 @@ const deleteUserById = async(req, res, next) => {
         const options = { password: 0 };
         const user = await findWithId(User, id, options);
 
-        // deleate user
-        // const deleatedUesr = await User.findByIdAndDelete({
-        //     _id: id,
-        //     isAdmin: false
-        // });
-
-        // if (!deleteUser) {
-        //     console.log("user doesnot exist");
-        // }
-
-
-<<<<<<< HEAD
         //user image deleate 
-=======
->>>>>>> feature-6
         const userImagePath = user.image;
-        fs.existsSync(userImagePath, (err) => {
-            if (err) {
-                console.log("user image doesnot exist");
-            } else {
-                fs.unlink(userImagePath, (err) => {
-                    console.log("user image was deleated");
-                });
-            }
-        });
-<<<<<<< HEAD
-=======
-        await User.findByIdAndDelete({
-            _id: id,
-            isAdmin: false
-        });
->>>>>>> feature-6
+
+        fs.access(userImagePath)
+            .then(() => fs.unlink(userImagePath))
+            .then(console.log("user image doesnot exist"))
+            .catch(() => console.log('user image doesnot exist'));
+
+
+        // fs.existsSync(userImagePath, (err) => {
+        //     if (err) {
+        //         console.log("user image doesnot exist");
+        //     } else {
+        //         fs.unlink(userImagePath, (err) => {
+        //             console.log("user image was deleated");
+        //         });
+        //     }
+        // });
 
         await User.findByIdAndDelete({
             _id: id,
@@ -132,4 +117,5 @@ const deleteUserById = async(req, res, next) => {
         next(error);
     }
 };
+
 module.exports = { getAllUsers, getUserById, deleteUserById };
