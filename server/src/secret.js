@@ -6,6 +6,8 @@ const mongoDbUrll = (process.env.MONGODB_ATLAS_URL || 'mongodb://localhost:27017
 
 const defaultImagePath = 'public/images/users/men.png';
 
-module.exports = { serverPort, mongoDbUrll, defaultImagePath };
+const jwtActivationKey = process.env.JWT_ACTIVATION_KEY;
+
+module.exports = { serverPort, mongoDbUrll, defaultImagePath, jwtActivationKey };
 
 // process.env.DEFAULT_IMAGE_PATH ||
