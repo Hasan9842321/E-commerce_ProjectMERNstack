@@ -7,7 +7,7 @@ const { successResponse } = require('./responseController');
 
 const { findWithId } = require('../services/findItem');
 const deleteImage = require('../helper/deleteImage');
-const { jwtActivationKey } = require('../secret');
+const { jwtActivationKey, clintUrl } = require('../secret');
 const { createJsonWebToken } = require('../helper/jsonwebtoken');
 // const findUserById = require('../services/findUser');
 
@@ -127,6 +127,17 @@ const processRegister = async(req, res, next) => {
                 message: 'user was  created succesfully',
                 paylod: { token }
             });
+
+        //prepare email with nodeemailer
+
+        const emailData = {
+            email,
+            subject: 'Account Activation Email',
+            hrml: `
+                <h2>Hello ${name}</h2>
+                <p>please click here to  thik link <a href="${clintUrl}/api/users/activate/${token}" target="_blank"> activate your account</a></p>
+                `
+        }
 
     } catch (error) {
 
