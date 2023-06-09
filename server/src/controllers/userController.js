@@ -9,6 +9,7 @@ const { findWithId } = require('../services/findItem');
 const deleteImage = require('../helper/deleteImage');
 const { jwtActivationKey, clintUrl } = require('../secret');
 const { createJsonWebToken } = require('../helper/jsonwebtoken');
+const { emailWithNodeEmailer } = require('../helper/email');
 // const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
@@ -119,25 +120,41 @@ const processRegister = async(req, res, next) => {
         }
 
         //create JWT
-        const token = createJsonWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
+        const token = await createJsonWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
 
-        return successResponse(
-            res, {
-                statusCode: 200,
-                message: 'user was  created succesfully',
-                paylod: { token }
-            });
+        console.log('This is token:', token);
+
+
 
         //prepare email with nodeemailer
 
         const emailData = {
             email,
             subject: 'Account Activation Email',
-            hrml: `
+            html: `
                 <h2>Hello ${name}</h2>
-                <p>please click here to  thik link <a href="${clintUrl}/api/users/activate/${token}" target="_blank"> activate your account</a></p>
+                <p> please click here to  thik link <a href="${clintUrl}/api/users/activate/${token}" target="_blank"> activate your account </a> </p>
                 `
         }
+
+        // send email with nodeEmailer
+        try {
+
+            await emailWithNodeEmailer(emailData);
+        } catch (emailError) {
+            next(createError(500, 'Faild to send varification email'));
+            return;
+
+        }
+
+        return successResponse(
+            res, {
+                statusCode: 200,
+                message: `Please go to your ${email} for completing your registration process`,
+                paylod: { token },
+
+            });
+
 
     } catch (error) {
 
