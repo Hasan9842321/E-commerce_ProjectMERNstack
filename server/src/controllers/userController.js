@@ -7,8 +7,9 @@ const { successResponse } = require('./responseController');
 
 const { findWithId } = require('../services/findItem');
 const deleteImage = require('../helper/deleteImage');
-const { jwtActivationKey } = require('../secret');
-const { createJsonWebToken } = require('../helper/jsonwebtoken');
+const { jwtActivationKey, clintUrl } = require('../secret');
+const { emailWithNodeEmailer } = require('../helper/email');
+const { createJSONWEBToken } = require('../helper/jsonwebtoken');
 // const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
@@ -119,14 +120,39 @@ const processRegister = async(req, res, next) => {
         }
 
         //create JWT
-        const token = createJsonWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
+        const token = createJSONWEBToken({ name, email, password, phone, address }, jwtActivationKey, { expiresIn: '10m' });
+        // console.log("token: ", token);
+
+        //prepare email with nodeemailer
+
+        const emailData = {
+            email,
+            subject: 'Account Activation Email',
+            html: `
+                <h2>Hello ${name}</h2>
+                <p> please click here to  thik link <a href="${clintUrl}/api/users/activate/${token}" target="_blank"> activate your account </a> </p>
+                `
+        }
+
+        // send email with nodeEmailer
+        try {
+
+            await emailWithNodeEmailer(emailData);
+        } catch (emailError) {
+            next(createError(500, 'Faild to send varification email'));
+            return;
+
+        }
 
         return successResponse(
             res, {
                 statusCode: 200,
-                message: 'user was  created succesfully',
-                paylod: { token }
+                // message: `Please go to your ${email} for completing your registration process`,
+                message: 'user are created',
+                paylod: { token },
+
             });
+
 
     } catch (error) {
 
