@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-const createJsonWebToken = (payload, secretKey, expireIn) => {
+const createJSONWEBToken = (payload, secretKey, expireIn) => {
 
 
 
@@ -16,7 +16,7 @@ const createJsonWebToken = (payload, secretKey, expireIn) => {
 
     try {
 
-        const token = jwt.sign(payload, secretKey, { expireIn });
+        const token = jwt.sign(payload, secretKey, expireIn);
         return token;
     } catch (error) {
         console.log('Faild to Signin the JWT', error);
@@ -25,4 +25,4 @@ const createJsonWebToken = (payload, secretKey, expireIn) => {
 
 }
 
-module.exports = { createJsonWebToken };
+module.exports = { createJSONWEBToken };

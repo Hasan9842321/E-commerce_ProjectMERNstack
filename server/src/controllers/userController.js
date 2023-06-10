@@ -8,8 +8,8 @@ const { successResponse } = require('./responseController');
 const { findWithId } = require('../services/findItem');
 const deleteImage = require('../helper/deleteImage');
 const { jwtActivationKey, clintUrl } = require('../secret');
-const { createJsonWebToken } = require('../helper/jsonwebtoken');
 const { emailWithNodeEmailer } = require('../helper/email');
+const { createJSONWEBToken } = require('../helper/jsonwebtoken');
 // const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
@@ -120,11 +120,8 @@ const processRegister = async(req, res, next) => {
         }
 
         //create JWT
-        const token = await createJsonWebToken({ name, email, password, phone, address }, jwtActivationKey, '10m');
-
-        console.log('This is token:', token);
-
-
+        const token = createJSONWEBToken({ name, email, password, phone, address }, jwtActivationKey, { expiresIn: '10m' });
+        // console.log("token: ", token);
 
         //prepare email with nodeemailer
 
@@ -150,7 +147,8 @@ const processRegister = async(req, res, next) => {
         return successResponse(
             res, {
                 statusCode: 200,
-                message: `Please go to your ${email} for completing your registration process`,
+                // message: `Please go to your ${email} for completing your registration process`,
+                message: 'user are created',
                 paylod: { token },
 
             });
