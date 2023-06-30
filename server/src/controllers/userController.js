@@ -137,7 +137,7 @@ const processRegister = async(req, res, next) => {
         // send email with nodeEmailer
         try {
 
-            await emailWithNodeEmailer(emailData);
+            // await emailWithNodeEmailer(emailData);
         } catch (emailError) {
             next(createError(500, 'Faild to send varification email'));
             return;
