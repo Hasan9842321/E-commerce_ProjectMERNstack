@@ -6,7 +6,7 @@ const validateUserRegistration = [
     .trim()
     .notEmpty()
     .withMessage("name is required, enter your full name")
-    .isLength({ min: 3, max: 31 })
+    .isLength({ min: 5, max: 31 })
     .withMessage("Name Should be at least 3-31 characters long"),
 
     body('email')
@@ -23,7 +23,7 @@ const validateUserRegistration = [
     .isLength({ min: 6 })
     .withMessage("Password Should be at least 6 characters long")
     .matches(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d) (?=.*[@$ !%*?&]) [A - Za - z\ d @$! % * ? & ] + $ /
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
     )
     .withMessage(
         'Password should contain at least uppercase letter, one lowercase letter, one number, and one special character.'
@@ -42,15 +42,22 @@ const validateUserRegistration = [
     .notEmpty()
     .withMessage("phone number  is required, enter your phone"),
 
+    // body('image')
+    // .isString()
+
     body('image')
-    .optional()
-    .isString()
+    .custom((value, { req }) => {
 
-
-
+        if (!req.file || !req.file.buffer) {
+            throw new Error('User buffer image is required');
+        }
+        return true;
+    })
+    .withMessage('user image must  is required'),
 
 
 ];
+
 // Singn in validation 
 
 

@@ -1,8 +1,8 @@
 const express = require('express');
 const { getAllUsers, getUserById, deleteUserById, processRegister, activateUserAccount } = require('../controllers/userController');
 const { upload } = require('../middlewares/uploadFile');
-const { validateUserRegistration } = require('../validators/auth');
 const { runValidation } = require('../validators');
+const { validateUserRegistration } = require('../validators/auth');
 
 const userRouter = express.Router();
 
