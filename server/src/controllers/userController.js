@@ -113,6 +113,30 @@ const processRegister = async(req, res, next) => {
     try {
 
         const { name, email, password, phone, address } = req.body;
+
+        // base64_encode = (file) => {
+        //     var bitmap = fs.readFileSync(file);
+        //     return new Buffer(bitmap).toString('base64');
+        // }
+        const image = req.file;
+
+        // console.log('image----------------------');
+
+        // console.log(img);
+        // console.log('image----------------------');
+
+        if (!image) {
+            throw createError(400, "img file is require high;ly");
+        }
+
+        if (!image) {
+            throw createError(400, "img file size is large");
+        }
+
+        const imageBufferString = imgae.buffer.toString('base64');
+
+        // console.log(`image::  ,${imageBufferString}`)
+
         const userExist = await User.exists({ email: email });
 
         if (userExist) {
@@ -120,7 +144,7 @@ const processRegister = async(req, res, next) => {
         }
 
         //create JWT
-        const token = createJSONWEBToken({ name, email, password, phone, address }, jwtActivationKey, { expiresIn: '10m' });
+        const token = createJSONWEBToken({ name, email, password, phone, address, image: imageBufferString }, jwtActivationKey, { expiresIn: '10m' });
         // console.log("token: ", token);
 
         //prepare email with nodeemailer
@@ -147,8 +171,8 @@ const processRegister = async(req, res, next) => {
         return successResponse(
             res, {
                 statusCode: 200,
-                // message: `Please go to your ${email} for completing your registration process`,
-                message: 'user are created',
+                message: `Please go to your ${email} for completing your registration process`,
+                // message: 'user are created',
                 paylod: { token },
 
             });
