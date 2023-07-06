@@ -35,7 +35,7 @@ const handleLogin = async(req, res, next) => {
 
         //token, cookie
 
-        const accessToken = createJSONWEBToken({ email },
+        const accessToken = createJSONWEBToken({ _id: user._id },
             JwtAccessKey, '10m'
         );
 
@@ -67,7 +67,7 @@ const handleLogin = async(req, res, next) => {
 const handleLogout = async(req, res, next) => {
     try {
 
-        res.clearCookie('access_token')
+        res.clearCookie('accessToken')
 
 
 
