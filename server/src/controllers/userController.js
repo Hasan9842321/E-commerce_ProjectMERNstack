@@ -3,6 +3,9 @@ const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
 const jwt = require('jsonwebtoken');
+// const { runValidation } = require('../validators');
+
+
 
 
 const { findWithId } = require('../services/findItem');
@@ -10,6 +13,7 @@ const deleteImage = require('../helper/deleteImage');
 const { jwtActivationKey, clintUrl } = require('../secret');
 const { emailWithNodeEmailer } = require('../helper/email');
 const { createJSONWEBToken } = require('../helper/jsonwebtoken');
+const { runValidation } = require('../validators');
 // const findUserById = require('../services/findUser');
 
 const getAllUsers = async(req, res, next) => {
@@ -109,33 +113,30 @@ const deleteUserById = async(req, res, next) => {
     }
 };
 
-const processRegister = async(req, res, next) => {
+const processRegisters = async(req, res, next) => {
+
+
+
+    // console.log({ name, email, password, phone, address })
+    // console.log(file)
+
     try {
+
 
         const { name, email, password, phone, address } = req.body;
 
-        // base64_encode = (file) => {
-        //     var bitmap = fs.readFileSync(file);
-        //     return new Buffer(bitmap).toString('base64');
-        // }
         const image = req.file;
 
-        // console.log('image----------------------');
-
-        // console.log(img);
-        // console.log('image----------------------');
-
         if (!image) {
-            throw createError(400, "img file is require high;ly");
+            throw createError(400, `img file is require high;ly${file}`);
         }
 
-        if (!image) {
-            throw createError(400, "img file size is large");
+        if (image.size > 1024 * 1024 * 2) {
+            throw new Error(`file size is too lerge.It must be 2 mb`);
         }
+        const imageBufferString = image.buffer.toString('base64')
 
-        const imageBufferString = imgae.buffer.toString('base64');
 
-        // console.log(`image::  ,${imageBufferString}`)
 
         const userExist = await User.exists({ email: email });
 
@@ -161,7 +162,7 @@ const processRegister = async(req, res, next) => {
         // send email with nodeEmailer
         try {
 
-            // await emailWithNodeEmailer(emailData);
+            await emailWithNodeEmailer(emailData);
         } catch (emailError) {
             next(createError(500, 'Faild to send varification email'));
             return;
@@ -230,4 +231,74 @@ const activateUserAccount = async(req, res, next) => {
     }
 };
 
-module.exports = { getAllUsers, getUserById, deleteUserById, processRegister, activateUserAccount };
+
+const updateUserById = async(req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const options = { password: 0 };
+        await findWithId(User, userId, options);
+
+        const updateOptions = { new: true, runValidators: true, contex: 'query' };
+        let updates = {};
+
+        // if (req.body.name) {
+        //     updates.name = req.body.name;
+        // }
+        // if (req.body.password) {
+        //     updates.password = req.body.password;
+        // }
+        // if (req.body.phone) {
+        //     updates.phone = req.body.phone;
+        // }
+        // if (req.body, address) {
+        //     updates.address = req.body.address;
+        // }
+
+        for (let key in req.body) {
+            if (['name', 'password', 'phone', 'address'].includes(key)) {
+                updates[key] = req.body[key];
+            } else if (['email'].includes(key)) {
+                throw new Error('Emil can not be update');
+            }
+
+        }
+
+        const image = req.file;
+        if (image) {
+            if (image.size > 1024 * 1024 * 2) {
+                throw new Error(`file size is too lerge.It must be 2 mb`);
+            }
+            updates.image = image.buffer.toString('base64');
+        }
+
+
+
+
+        const updatedUser = await User.findByIdAndUpdate(userId, updates, updateOptions).select("-password");
+
+        if (!updatedUser) {
+            throw createError(404, "user id doesnot exist");
+        }
+
+
+
+        return successResponse(
+            res, {
+                statusCode: 200,
+                message: 'user was  updated succesfully',
+                paylod: updatedUser
+
+            });
+
+    } catch (error) {
+
+        next(error);
+    }
+};
+
+
+
+
+
+
+module.exports = { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById };
