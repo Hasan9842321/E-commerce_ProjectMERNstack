@@ -1,7 +1,9 @@
-const { body } = require("express-validator");
+const { body, query, check } = require("express-validator");
+const { ALLOWED_FILE_TYPES } = require("../config");
 
+const newLocal = body('file');
 //registration validation
-const validateUserRegistration = [
+exports.validateUserRegistrations = [
     body('name')
     .trim()
     .notEmpty()
@@ -45,6 +47,8 @@ const validateUserRegistration = [
     // body('image')
     // .isString()
 
+
+    // body('file').optional().isString()
     body('image')
     .custom((value, { req }) => {
 
@@ -53,13 +57,13 @@ const validateUserRegistration = [
         }
         return true;
     })
-    .withMessage('user image must  is required'),
+    .withMessage('user image must  is required')
+
+
+
+
 
 
 ];
 
-// Singn in validation 
-
-
-
-module.exports = { validateUserRegistration };
+// Singn in validation
