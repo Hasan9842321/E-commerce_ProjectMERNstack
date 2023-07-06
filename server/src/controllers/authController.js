@@ -9,7 +9,7 @@ const { createJSONWEBToken } = require('../helper/jsonwebtoken');
 const { JwtAccessKey } = require('../secret');
 
 
-const handleLogin = async(req, res) => {
+const handleLogin = async(req, res, next) => {
     try {
         //email ,password
         const { email, password } = req.body;
@@ -63,4 +63,24 @@ const handleLogin = async(req, res) => {
         next(error)
     }
 }
-module.exports = { handleLogin };
+
+const handleLogout = async(req, res, next) => {
+    try {
+
+        res.clearCookie('access_token')
+
+
+
+        //success response
+        return successResponse(res, {
+                statusCode: 200,
+                message: 'user  loggout successfully',
+                paylod: {}
+            }
+
+        );
+    } catch (error) {
+        next(error)
+    }
+}
+module.exports = { handleLogin, handleLogout };
