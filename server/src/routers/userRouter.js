@@ -11,7 +11,8 @@ const userRouter = express.Router();
 
 // upload.array('image', 1)
 //api/users 
-userRouter.get("/", getAllUsers);
+
+userRouter.get("/", getAllUsers); //Accessable for only Admin
 userRouter.post('/process-register', upload.single('image'), validateUserRegistrations, runValidation, processRegisters);
 userRouter.post('/verify', activateUserAccount);
 userRouter.get("/:id", getUserById);

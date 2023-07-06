@@ -7,10 +7,11 @@ const createError = require('http-errors');
 //API security 
 const xssClean = require('xss-clean');
 const rateLimit = require('express-rate-limit');
-
+const cookieParser = require('cookie-parser')
 const userRouter = require('./routers/userRouter');
 const { seedRouter } = require('./routers/seedRouter');
 const { errorResponse } = require('./controllers/responseController');
+const { authRouter } = require('./routers/authRouter');
 
 const rateLimitr = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -20,13 +21,15 @@ const rateLimitr = rateLimit({
     message: 'Too many requests from this IP. Please try again later'
 })
 
-
+app.use(cookieParser)
+app.use(rateLimitr)
 app.use(xssClean());
 app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use("/api/users", userRouter);
+app.use('/api/auth', authRouter)
 app.use("/api/seed", seedRouter);
 
 
