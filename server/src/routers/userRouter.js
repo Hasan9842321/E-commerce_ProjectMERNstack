@@ -3,7 +3,7 @@ const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUser
 const { upload } = require('../middlewares/uploadFile');
 const { runValidation } = require('../validators');
 const { validateUserRegistrations } = require('../validators/auth');
-const { isLoggedIn, isLoggedOut } = require('../middlewares/auth');
+const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 
 
 
@@ -17,7 +17,7 @@ const userRouter = express.Router();
 userRouter.post('/process-register', upload.single('image'), isLoggedOut, validateUserRegistrations, runValidation, processRegisters);
 userRouter.post('/activate', isLoggedOut, activateUserAccount);
 
-userRouter.get("/", isLoggedIn, getAllUsers); //Accessable for only Admin
+userRouter.get("/", isLoggedIn, isAdmin, getAllUsers); //Accessable for only Admin
 userRouter.get("/:id", isLoggedIn, getUserById);
 userRouter.delete("/:id", isLoggedIn, deleteUserById);
 userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUserById);

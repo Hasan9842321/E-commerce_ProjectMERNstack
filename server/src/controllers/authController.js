@@ -35,8 +35,8 @@ const handleLogin = async(req, res, next) => {
 
         //token, cookie
 
-        const accessToken = createJSONWEBToken({ _id: user._id },
-            JwtAccessKey, '10m'
+        const accessToken = createJSONWEBToken({ user },
+            JwtAccessKey, '15m'
         );
 
         //cookie
