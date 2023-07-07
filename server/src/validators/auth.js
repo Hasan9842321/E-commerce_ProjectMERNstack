@@ -1,7 +1,7 @@
 const { body, query, check } = require("express-validator");
-const { ALLOWED_FILE_TYPES } = require("../config");
 
-const newLocal = body('file');
+
+
 //registration validation
 exports.validateUserRegistrations = [
     body('name')
