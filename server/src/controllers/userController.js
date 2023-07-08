@@ -353,9 +353,7 @@ const handleUnBanUserById = async(req, res, next) => {
     }
 };
 
-const example = async(req, res, next) => {
 
-}
 
 
 

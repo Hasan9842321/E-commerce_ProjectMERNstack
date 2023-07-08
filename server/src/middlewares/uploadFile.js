@@ -35,14 +35,16 @@ const fileFilter = async(req, file, cb) => {
 
     if (!file.mimetype.startsWith('image/')) {
         return cb(new Error('Only image are allowd'), false);
-    } else if (file.size > MAX_FILE_SIZE) {
-        return cb(new Error('File size exceds the maximum limit '), false)
-    } else if (!(ALLOWED_FILE_TYPES.includes(file.mimetype))) {
-        return cb(new Error('File extension is not allowd'), false)
-    } else {
-
-        return cb(null, true)
     }
+    if (file.size > MAX_FILE_SIZE) {
+        return cb(new Error('File size exceds the maximum limit '), false)
+    }
+    if (!(ALLOWED_FILE_TYPES.includes(file.mimetype))) {
+        return cb(new Error('File extension is not allowd'), false)
+    }
+
+    cb(null, true)
+
 
 
 
