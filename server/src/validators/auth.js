@@ -3,7 +3,7 @@ const { body, query, check } = require("express-validator");
 
 
 //registration validation
-exports.validateUserRegistrations = [
+const validateUserRegistrations = [
     body('name')
     .trim()
     .notEmpty()
@@ -67,3 +67,28 @@ exports.validateUserRegistrations = [
 ];
 
 // Singn in validation
+
+const validateUserLogin = [
+    body('email')
+    .trim()
+    .notEmpty()
+    .withMessage("email is required, enter your email address")
+    .isEmail()
+    .withMessage("Invalid Email address"),
+
+    body('password')
+    .trim()
+    .notEmpty()
+    .withMessage("Password is required, enter your password")
+    .isLength({ min: 6 })
+    .withMessage("Password Should be at least 6 characters long")
+    .matches(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    )
+    .withMessage(
+        'Password should contain at least uppercase letter, one lowercase letter, one number, and one special character.'
+    ),
+
+];
+
+module.exports = { validateUserRegistrations, validateUserLogin }

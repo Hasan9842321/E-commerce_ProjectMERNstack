@@ -90,9 +90,9 @@ const deleteUserById = async(req, res, next) => {
         const user = await findWithId(User, id, options);
 
         //user image deleate 
-        const userImagePath = user.image;
+        // const userImagePath = user.image;
 
-        deleteImage(userImagePath);
+        // deleteImage(userImagePath);
 
 
         await User.findByIdAndDelete({

@@ -4,15 +4,17 @@ const data = {
             name: 'Md. hasibul Hasan',
             email: 'hasan1298@yahoo.co.uk',
             password: '123456',
-            phone: '04055566',
-            address: 'Dhaka, bangladesh'
+            phone: 'Abir12345#$',
+            address: 'Dhaka, bangladesh',
+            image: 'default.png'
         },
         {
             name: 'Md. shakibul Hasan',
             email: 'sakib@gmail.co.uk',
-            password: '123456',
+            password: 'Abir12345#$',
             phone: '04055566',
-            address: 'Mirpur, bangladesh'
+            address: 'Mirpur, bangladesh',
+            image: 'default.png'
 
         }
     ]
