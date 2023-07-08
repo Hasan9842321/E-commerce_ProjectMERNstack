@@ -33,6 +33,7 @@ const handleLogin = async(req, res, next) => {
 
         }
 
+
         //token, cookie
 
         const accessToken = createJSONWEBToken({ user },
@@ -48,14 +49,13 @@ const handleLogin = async(req, res, next) => {
         })
 
 
-
-
+        const userWithoutPassword = await User.findOne({ email }).select('-password');
 
         //success response
         return successResponse(res, {
                 statusCode: 200,
                 message: 'user  loggeding successfully',
-                paylod: {}
+                paylod: { userWithoutPassword }
             }
 
         );
