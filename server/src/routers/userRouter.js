@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById } = require('../controllers/userController');
+const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById, handleBanUserById, handleUnBanUserById } = require('../controllers/userController');
 const { upload } = require('../middlewares/uploadFile');
 const { runValidation } = require('../validators');
 const { validateUserRegistrations } = require('../validators/auth');
@@ -21,5 +21,8 @@ userRouter.get("/", isLoggedIn, isAdmin, getAllUsers); //Accessable for only Adm
 userRouter.get("/:id", isLoggedIn, getUserById);
 userRouter.delete("/:id", isLoggedIn, deleteUserById);
 userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUserById);
+//user bann & unbann
+userRouter.put("/bann-user:id", isLoggedIn, isAdmin, handleBanUserById);
+userRouter.put("/unban-user/:id", isLoggedIn, isAdmin, handleUnBanUserById);
 
 module.exports = userRouter;
