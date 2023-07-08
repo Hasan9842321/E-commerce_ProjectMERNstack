@@ -3,6 +3,7 @@ const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUser
 const { upload } = require('../middlewares/uploadFile');
 const { runValidation } = require('../validators');
 const { validateUserRegistrations } = require('../validators/auth');
+const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 
 
 
@@ -12,11 +13,13 @@ const userRouter = express.Router();
 // upload.array('image', 1)
 //api/users 
 
-userRouter.get("/", getAllUsers); //Accessable for only Admin
-userRouter.post('/process-register', upload.single('image'), validateUserRegistrations, runValidation, processRegisters);
-userRouter.post('/verify', activateUserAccount);
-userRouter.get("/:id", getUserById);
-userRouter.delete("/:id", deleteUserById);
-userRouter.put("/:id", upload.single("image"), updateUserById);
+
+userRouter.post('/process-register', upload.single('image'), isLoggedOut, validateUserRegistrations, runValidation, processRegisters);
+userRouter.post('/activate', isLoggedOut, activateUserAccount);
+
+userRouter.get("/", isLoggedIn, isAdmin, getAllUsers); //Accessable for only Admin
+userRouter.get("/:id", isLoggedIn, getUserById);
+userRouter.delete("/:id", isLoggedIn, deleteUserById);
+userRouter.put("/:id", upload.single("image"), isLoggedIn, updateUserById);
 
 module.exports = userRouter;
