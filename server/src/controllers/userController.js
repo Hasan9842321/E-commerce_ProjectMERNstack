@@ -3,7 +3,8 @@ const createError = require('http-errors');
 const User = require('../models/userModel');
 const { successResponse } = require('./responseController');
 const jwt = require('jsonwebtoken');
-// const { runValidation } = require('../validators');
+const bcrypt = require('bcryptjs')
+    // const { runValidation } = require('../validators');
 
 
 
@@ -353,6 +354,43 @@ const handleUnBanUserById = async(req, res, next) => {
     }
 };
 
+const handleUpdatePassword = async(req, res, next) => {
+    try {
+        const { oldPassword, newPassword } = req.body;
+        const userId = req.params.id;
+        const user = await findWithId(User, userId);
+
+        //compare the password
+        const isPasswordMatch = await bcrypt.compare(oldPassword, user.password)
+        if (!isPasswordMatch) {
+            throw createError(400, "oldPassword did not match");
+        }
+        //update password
+        const filter = { userId }
+        const update = { $set: { password: newPassword } }
+        const updateOptions = { new: true }
+        const updatedUser = await User.findByIdAndUpdate(
+            userId,
+            user,
+            updateOptions
+        ).select('-password')
+
+        //not update
+        if (!updatedUser) {
+            throw createError(400, "User was not ")
+        }
+
+
+        return successResponse(res, {
+            statusCode: 200,
+            message: "user was updated ",
+            paylod: { user }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 
@@ -360,4 +398,14 @@ const handleUnBanUserById = async(req, res, next) => {
 
 
 
-module.exports = { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById, handleBanUserById, handleUnBanUserById };
+module.exports = {
+    getAllUsers,
+    getUserById,
+    deleteUserById,
+    processRegisters,
+    activateUserAccount,
+    updateUserById,
+    handleBanUserById,
+    handleUnBanUserById,
+    handleUpdatePassword,
+};
