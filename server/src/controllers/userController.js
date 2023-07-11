@@ -7,11 +7,9 @@ const bcrypt = require('bcryptjs')
     // const { runValidation } = require('../validators');
 
 
-
-
 const { findWithId } = require('../services/findItem');
 const deleteImage = require('../helper/deleteImage');
-const { jwtActivationKey, clintUrl } = require('../secret');
+const { jwtActivationKey, clintUrl, jwtResetPasswordkey } = require('../secret');
 const { emailWithNodeEmailer } = require('../helper/email');
 const { createJSONWEBToken } = require('../helper/jsonwebtoken');
 const { runValidation } = require('../validators');
@@ -325,8 +323,6 @@ const handleBanUserById = async(req, res, next) => {
     }
 };
 
-
-
 const handleUnBanUserById = async(req, res, next) => {
     try {
         const userId = req.params.id;
@@ -392,8 +388,51 @@ const handleUpdatePassword = async(req, res, next) => {
     }
 };
 
+const handleForgetPassword = async(req, res, next) => {
+    try {
+        const { email } = req.body;
+        const userData = await user.findOne({ email: email });
+        if (!userData) {
+            throw createError(404, "Email is incorrect or you have not verified your email.Please register yourself first");
+        }
+
+        //create JWT
+        const token = createJSONWEBToken({ email }, jwtResetPasswordkey, { expiresIn: '10m' });
+
+        //prepare email with nodeemailer
+        const emailData = {
+            email,
+            subject: 'Reset password Email',
+            html: `
+                 <h2>Hello ${userData.name}</h2>
+                 <p> please click here to  thik link <a href="${clintUrl}/api/users/reset-password/${token}" target="_blank"> reset your password</a> </p>
+                 `
+        }
+
+        // send email with nodeEmailer
+        try {
+
+            await emailWithNodeEmailer(emailData);
+        } catch (emailError) {
+            next(createError(500, 'Faild to send reset password  email'));
+            return;
+
+        }
+
+        return successResponse(
+            res, {
+                statusCode: 200,
+                message: `Please go to your ${email} for reseting the password`,
+                paylod: { token },
 
 
+            });
+
+
+    } catch (error) {
+        next(error);
+    }
+};
 
 
 
@@ -408,4 +447,5 @@ module.exports = {
     handleBanUserById,
     handleUnBanUserById,
     handleUpdatePassword,
+    handleForgetPassword,
 };

@@ -1,8 +1,8 @@
 const express = require('express');
-const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById, handleBanUserById, handleUnBanUserById, handleUpdatePassword } = require('../controllers/userController');
+const { getAllUsers, getUserById, deleteUserById, processRegisters, activateUserAccount, updateUserById, handleBanUserById, handleUnBanUserById, handleUpdatePassword, handleForgetPassword } = require('../controllers/userController');
 const { upload } = require('../middlewares/uploadFile');
 const { runValidation } = require('../validators');
-const { validateUserRegistrations, validateUserPasswordUpdate } = require('../validators/auth');
+const { validateUserRegistrations, validateUserPasswordUpdate, validateUserForgetPassword } = require('../validators/auth');
 const { isLoggedIn, isLoggedOut, isAdmin } = require('../middlewares/auth');
 
 
@@ -40,5 +40,13 @@ userRouter.put(
     runValidation,
     handleUpdatePassword,
 );
+// forget password
+userRouter.post(
+    "/forget-password/:id",
+    validateUserForgetPassword,
+    runValidation,
+    handleForgetPassword,
+);
+
 
 module.exports = userRouter;
